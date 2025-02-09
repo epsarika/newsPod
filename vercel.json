@@ -1,0 +1,8 @@
+{
+  "routes": [
+    {
+      "src": "/newsPod/(.*)",
+      "dest": "newsPod/newsPod/wsgi.py"
+    }
+  ]
+}
