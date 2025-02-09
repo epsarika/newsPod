@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-8">
+    <div class="flex space-x-4 overflow-x-auto pb-4">
+        {% for cat in categories %}
+        <a href="?category={{ cat }}" 
+           class="px-4 py-2 rounded-full {% if cat == selected_category %}bg-blue-600 text-white {% else %}bg-white text-blue-600 hover:bg-blue-100{% endif %} shadow">
+            {{ cat|title }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="mb-6 text-center"> <!-- Center-aligned heading -->
+    <h1 class="text-3xl font-bold text-gray-800 pb-2 inline-block">
+        Daily News Summary - {{ selected_category|title }}
+    </h1>
+</div>
+
+{% if audio_file %}
+<div class="bg-white shadow-lg rounded-lg p-4 mb-8">
+    <audio controls class="w-full">
+        
+        <source src="{{ audio_file }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+</div>
+{% endif %}
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% if news_articles %}
+        {% for article in news_articles %}
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            {% if article.image %}
+            <img src="{{ article.image }}" alt="{{ article.title }}" class="w-full h-48 object-cover">
+            {% endif %}
+            <div class="p-4">
+                <h2 class="text-xl font-bold mb-2">{{ article.title }}</h2>
+                <p class="text-gray-600 mb-4">{{ article.summary }}</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-500">{{ article.source }}</span>
+                    <div class="space-x-2">
+                        <a href="{{ article.url }}" target="_blank" class="text-blue-600 hover:text-blue-800">Read More</a>
+                        <form method="POST" action="{% url 'save_news' %}" class="inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="title" value="{{ article.title }}">
+                            <input type="hidden" name="summary" value="{{ article.summary }}">
+                            <input type="hidden" name="url" value="{{ article.url }}">
+                            <input type="hidden" name="image" value="{{ article.image }}">
+                            <input type="hidden" name="category" value="{{ selected_category }}">
+                            <button type="submit" class="text-green-600 hover:text-green-800">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-span-full text-center py-8">
+            <p class="text-gray-600">No news articles available at this time. Please try again later.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

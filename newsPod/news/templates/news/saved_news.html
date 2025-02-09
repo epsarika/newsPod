@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-8">
+    <div class="flex space-x-4 overflow-x-auto pb-4">
+        <a href="{% url 'saved_news' %}" 
+           class="px-4 py-2 rounded-full {% if not selected_category %}bg-blue-600 text-white{% else %}bg-white text-blue-600 hover:bg-blue-100{% endif %} shadow">
+            All
+        </a>
+        {% for cat in categories %}
+        <a href="?category={{ cat }}" 
+           class="px-4 py-2 rounded-full {% if cat == selected_category %}bg-blue-600 text-white{% else %}bg-white text-blue-600 hover:bg-blue-100{% endif %} shadow">
+            {{ cat|title }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+<div class="mb-6 text-center"> <!-- Center-aligned heading -->
+    <h1 class="text-3xl font-bold text-gray-800 pb-2 inline-block">
+        Saved News Summary 
+    </h1>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% if saved_articles %}
+        {% for article in saved_articles %}
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            {% if article.image %}
+            <img src="{{ article.image }}" alt="{{ article.title }}" class="w-full h-48 object-cover">
+            {% endif %}
+            <div class="p-4">
+                <h2 class="text-xl font-bold mb-2">{{ article.title }}</h2>
+                <p class="text-gray-600 mb-4">{{ article.summary }}</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-500">{{ article.category|title }}</span>
+                    <a href="{{ article.url }}" target="_blank" class="text-blue-600 hover:text-blue-800">Read More</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-span-full text-center py-8">
+            <p class="text-gray-600">No saved articles yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
